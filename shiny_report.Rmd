@@ -1,0 +1,32 @@
+---
+title: "markdown"
+author: "Nick"
+date: "2023-09-19"
+output: html_document
+---
+---
+title: "My Shiny Report"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+runtime: shiny
+---
+
+```{r}
+library(shiny)
+
+fluidRow(
+  column(6,
+    selectInput("x", "X-axis:", choices = names(mtcars)),
+    selectInput("y", "Y-axis:", choices = names(mtcars))
+  ),
+  column(6,
+    plotOutput("plot")
+  )
+)
+
+server <- function(input, output) {
+  output$plot <- renderPlot({
+    plot(mtcars[, input$x], mtcars[, input$y], main = "Scatterplot")
+  })
+}

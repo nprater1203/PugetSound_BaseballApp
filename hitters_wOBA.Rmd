@@ -1,0 +1,26 @@
+---
+title: "Puget Sound Hitters wOBA Fall 2023"
+output: 
+  html_document:
+    css: styles.css
+---
+
+*Red line denotes average wOBA for the team*
+
+
+```{r, echo=FALSE}
+library(ggplot2)
+source("globalDataFrames.r")
+# Generate a sample dataset
+data <- data.frame(Player = fall2023HittersStats[,"Hitter"],
+                   wOBA = fall2023HittersStats[,"WOBA"])
+avgWOBA <- mean(fall2023HittersStats[,"WOBA"])
+
+# Create a bar chart
+ggplot(data, aes(x = reorder(Player, -wOBA), y = wOBA)) +
+  geom_bar(stat = "identity", fill = "blue") +
+  labs(title = "Weighted On-Base Average", x = "Player", y = "wOBA") + 
+  geom_text(aes(x = 20, y = avgWOBA+.01, label = round(avgWOBA, 3)), hjust = -0.1, vjust = 0, color = "red") +
+  geom_hline(yintercept = avgWOBA, color = "red", linetype = "solid", linewidth = 1) +
+
+theme(axis.text.x = element_text(angle = 90, hjust = 1) )

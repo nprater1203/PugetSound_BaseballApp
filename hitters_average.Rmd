@@ -1,0 +1,20 @@
+---
+title: "Puget Sound Hitters Average Fall 2023"
+output: 
+  html_document:
+    css: styles.css
+---
+
+
+
+```{r, echo=FALSE}
+library(ggplot2)
+source("globalDataFrames.r")
+# Generate a sample dataset
+data <- data.frame(Player = fall2023HittersStats[,"Hitter"],
+                   Average = fall2023HittersStats[,"BA"])
+
+# Create a bar chart
+ggplot(data, aes(x = Player, y = Average)) +
+  geom_bar(stat = "identity", fill = "blue") +
+  labs(title = "Batting Averages", x = "Player", y = "Average") + theme(axis.text.x = element_text(angle = 90, hjust = 1))
