@@ -3,6 +3,7 @@ title: "Puget Sound Hitters Fall 2023"
 output: 
   html_document:
     css: styles.css
+runtime: shiny
 ---
 
 *Red line denotes average of the stat selected for the team*
@@ -14,20 +15,47 @@ library(shiny)
 source("globalDataFrames.r")
 # Generate a sample dataset
 
-# Shiny UI
-headers <- colnames(fall2023HittersStats)
-selectedStat <- selectInput("variable", "Select a stat:", choices = unique(headers))
 
-data <- data.frame(Player = fall2023HittersStats[,"Hitter"],
+
+# Shiny UI63
+headers <- colnames(fall2023HittersStats)[-1]
+#headers <- headers[-1]
+positionList <- colnames(fall2023HittersStats)[-length(colnames(fall2023HittersStats))]
+
+
+ui <- fluidPage(
+  uiOutput("select_dropdown"),
+  plotOutput("barplot")
+)
+
+  
+#)
+server <- function(input,output,session){
+  
+  output[["select_dropdown"]] <- renderUI({
+    selectInput("variable", "Select a stat:", choices = headers)
+    #selectInput("postions", "Select a postion:", choices = positionList)
+
+  })
+
+  output[["barplot"]] <- renderPlot({
+  
+    selectedStat <- input[["variable"]]
+    data <- data.frame(Player = fall2023HittersStats[,"Hitter"],
                    metric = fall2023HittersStats[,selectedStat])
-avg <- mean(fall2023HittersStats[,selectedStat])
+    avg <- mean(fall2023HittersStats[,selectedStat])
+
 
 # Create a bar chart
-ggplot(data, aes(x = reorder(Player, -metric), y = metric)) +
-  geom_bar(stat = "identity", fill = "blue") +
-  labs(title = "Metric", x = "Player", y = "metric") + 
-  geom_text(aes(x = 20, y = avg+.01, label = round(avg, 3)), hjust = -0.1, vjust = 0, color = "red") +
-  geom_hline(yintercept = avg, color = "red", linetype = "solid", linewidth = 1) +
+    ggplot(data, aes(x = reorder(Player, -metric), y = metric)) +
+      geom_bar(stat = "identity", fill = "blue") +
+      labs(title = "Metric", x = "Player", y = selectedStat) + 
+      geom_text(aes(x = 20, y = avg+.01, label = round(avg, 3)), hjust = -0.1, vjust = 0, color = "red") +
+      geom_hline(yintercept = avg, color = "red", linetype = "solid", linewidth = 1) +
 
-theme(axis.text.x = element_text(angle = 90, hjust = 1) )
+    theme(axis.text.x = element_text(angle = 90, hjust = 1) )
 
+  })
+}
+
+shinyApp(ui,server)
