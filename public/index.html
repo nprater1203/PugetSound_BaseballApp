@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>File Upload and Report Generation</title>
+</head>
+<body>
+    <h1>Generate A Gameplan Report</h1>
+    <h2>Upload a CSV File</h2>
+    <h4>1. Open the Google Docs File <br>
+        2. Select file tab <br>
+        3. Select download <br>
+        4. Select "Comma Selected Variable (.csv)" <br>
+        5. The data file should be downloaded on your local computer as a .csv file <br>
+        6. Upload that file <br>
+    </h4>
+    <form id="uploadFile" enctype="multipart/form-data">
+        <input type="file" id="fileID" accept=".csv">
+        <button type="button" onclick="uploadFileToServer()">Upload File</button>
+    </form>
+     
+    <script>
+
+        let dataFile = '';
+        // Script template for uploading the file and running the R script for chatGPT
+        //document.addEventListener('DOMContentLoaded', function () {
+        function uploadFileToServer() {
+            console.log("On here");
+            // Get the selected file
+            const fileInput = document.getElementById('fileID');
+            const file = fileInput.files[0];
+            console.log(fileInput.files[0]);
+
+            if (!file) {
+                alert('Please select a file');
+                return;
+            }
+
+            // Create a FormData object and append the file to it
+            const formData = new FormData();
+            formData.append('file', file);
+            console.dir(formData)
+
+            // Send the file to the server using fetch
+            fetch('/upload', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => {
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(data => {
+                // Display the output from the server (if needed)
+                console.log(data);
+                alert('Data sent successfully!');
+                dataFile = data // Upload the server response to the data file
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error executing R script. Please check the console for details.');
+            });
+        }
+
+        //const button = document.querySelector('button');
+       // button.addEventListener('click', uploadFileToServer);
+   // });
+    </script>
+    <p id=""status></p>
+
+    <script>
+        
+    </script>
+    <div id="report"></div>
+    <script src="script.js"></script>
+</body>
+</html>

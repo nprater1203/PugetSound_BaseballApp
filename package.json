@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@r-wasm/webr": "^0.2.0",
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1",
+    "r-script": "^0.0.4"
+  }
+}
