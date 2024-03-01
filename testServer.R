@@ -1,3 +1,5 @@
+# install.packages("plotly")
+# install.packages("htmlwidgets")
 singleStr <- paste(input[[1]], collapse = "")
 
 # Split the combined string into separate values
@@ -48,9 +50,14 @@ lists <- lapply(lists, function(x) {
 
 
 
-DF <- do.call(rbind, lists)
+dataDF <- do.call(rbind, lists)
 
-colnames(DF) <- DF[1,]
-DF <- DF[-1,]
+colnames(dataDF) <- dataDF[1,]
+dataDF <- dataDF[-1,]
 
-colnames(DF)
+# colnames(dataDF)
+
+#p <- plot_ly(dataDF, x = ~x, y = ~y, type = "bar")
+
+# Convert the graph to an HTML widget
+#widget <- htmlwidgets::saveWidget(p, "path/to/output/widget.html", selfcontained = TRUE)
