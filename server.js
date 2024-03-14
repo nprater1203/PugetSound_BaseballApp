@@ -15,6 +15,7 @@ const upload = multer({ storage: storage });
 app.use(express.json());
 
 let dataFile = '';
+let objectColNames = [];
 
 const rScriptPath = './testServer.R';
 const rContent = fs.readFileSync(rScriptPath, 'ascii');
@@ -43,14 +44,26 @@ app.post('/upload', upload.single('file'), (req, res) => {
         .data(dataFile)
         .callSync();
 
+    console.log(output);
+    // console.log("Size of output = ", Object.keys(output).length)
 
-    console.log("Returned Output from R = ", output);
+    // for (const key in output){
+    //     objectColNames.push(output[key])
+    // }
+    // console.log("Object sent back = ", objectColNames)
+    //objectColNames = output
 
+    //const report = "This is a sample report."; // Replace with actual report generation code
 
-     const report = "This is a sample report."; // Replace with actual report generation code
-
-     res.send(report);
+     res.send(objectColNames);
  });
+
+ app.get('/getColNames', (req, res) => {
+    // Receive column names from R script and send to the client
+    // const colNames = Object.keys(objectColNames);
+    // res.json(colNames);
+    res.send(objectColNames);
+});
 
 // Set up for a local host server
 app.listen(port, () => {

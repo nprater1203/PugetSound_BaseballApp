@@ -40,4 +40,27 @@ function uploadFileToServer() {
         console.error('Error:', error);
         alert('Error executing R script. Please check the console for details.');
     });
+
+    //fetchColumnNames();
 }
+
+// function fetchColumnNames() {
+//     fetch('/getColNames')
+//         .then(response => {
+//             if (!response.ok) {
+//                 throw new Error(`HTTP error! Status: ${response.status}`);
+//             }
+//             return response.json();
+//         })
+//         .then(data => {
+//             // Display column names on the webpage
+//             //Create a select input menu for the html
+//             console.log("Colnames sent back = ", data)
+//             const columnNamesDiv = document.getElementById('columnNames');
+//             //columnNamesDiv.textContent = data.join(', ');
+//         })
+//         .catch(error => {
+//             console.error('Error:', error);
+//             alert('Error fetching column names from the server. Please check the console for details.');
+//         });
+// }
