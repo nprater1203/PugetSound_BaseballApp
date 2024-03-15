@@ -55,7 +55,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
 
     //const report = "This is a sample report."; // Replace with actual report generation code
 
-     res.send(objectColNames);
+     res.send(output);
  });
 
  app.get('/getColNames', (req, res) => {

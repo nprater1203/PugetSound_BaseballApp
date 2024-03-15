@@ -34,7 +34,24 @@ function uploadFileToServer() {
         // Display the output from the server (if needed)
         console.log(data);
         alert('Data sent successfully!');
-        dataFile = data // Upload the server response to the data file
+        const pngFilePath = data.split('/').pop() // Upload the server response to the data file
+        
+        //console.log('Path to PNG file:', pngFilePath); // Log path to PNG file
+
+
+        //const pngFilePath = "/c/Users/nprat/OneDrive/Documents/Puget_Sound_Baseball_App/website/public/barplot.png"; // Assuming data contains the path to the PNG file
+    
+        console.log(pngFilePath)
+        // Check if the image exists at the provided path
+        checkImage(pngFilePath, function() {
+        // If the image exists, display it on the webpage
+        document.getElementById('imageContainer').innerHTML = `
+            <img src="${pngFilePath}" alt="Your Image" width="500" height="400">
+        `;
+        }, function() {
+            // If the image doesn't exist, display a message
+            document.getElementById('imageContainer').innerHTML = '<p>The image is not available.</p>';
+        });
     })
     .catch(error => {
         console.error('Error:', error);
@@ -64,3 +81,18 @@ function uploadFileToServer() {
 //             alert('Error fetching column names from the server. Please check the console for details.');
 //         });
 // }
+
+function checkImage(url, onSuccess, onError) {
+    var img = new Image();
+    img.onload = onSuccess;
+    img.onerror = onError;
+    img.src = url;
+}
+
+// var pngFilePath = './barplot.png';
+// checkImage(pngFilePath, function() {
+//     document.write('<p>Here is the PNG image:</p>');
+//     document.write('<img src="' + pngFilePath + '" alt="Your Image">');
+// }, function() {
+//     document.write('<p>The image is not available.</p>');
+// });
