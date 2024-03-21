@@ -1,12 +1,9 @@
-// Template got from chatGPT
-
-
+// Function to upload the file to the server
 function uploadFileToServer() {
     let dataFile = '';
     // Get the selected file
     const fileInput = document.getElementById('fileID');
     const file = fileInput.files[0];
-    console.log(fileInput.files[0]);
 
     if (!file) {
         alert('Please select a file');
@@ -16,7 +13,6 @@ function uploadFileToServer() {
     // Create a FormData object and append the file to it
     const formData = new FormData();
     formData.append('file', file);
-    console.dir(formData)
 
     // Send the file to the server using fetch
     fetch('/upload', {
@@ -24,75 +20,109 @@ function uploadFileToServer() {
         body: formData,
     })
     .then(response => {
-
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        return response.text();
+        return response.json();
     })
     .then(data => {
-        // Display the output from the server (if needed)
-        console.log(data);
         alert('Data sent successfully!');
-        const pngFilePath = data.split('/').pop() // Upload the server response to the data file
-        
-        //console.log('Path to PNG file:', pngFilePath); // Log path to PNG file
-
-
-        //const pngFilePath = "/c/Users/nprat/OneDrive/Documents/Puget_Sound_Baseball_App/website/public/barplot.png"; // Assuming data contains the path to the PNG file
-    
-        console.log(pngFilePath)
-        // Check if the image exists at the provided path
-        checkImage(pngFilePath, function() {
-        // If the image exists, display it on the webpage
-        document.getElementById('imageContainer').innerHTML = `
-            <img src="${pngFilePath}" alt="Your Image" width="500" height="400">
-        `;
-        }, function() {
-            // If the image doesn't exist, display a message
-            document.getElementById('imageContainer').innerHTML = '<p>The image is not available.</p>';
-        });
+        fetchColumnNames();
     })
     .catch(error => {
         console.error('Error:', error);
         alert('Error executing R script. Please check the console for details.');
     });
-
-    //fetchColumnNames();
 }
 
-// function fetchColumnNames() {
-//     fetch('/getColNames')
-//         .then(response => {
-//             if (!response.ok) {
-//                 throw new Error(`HTTP error! Status: ${response.status}`);
-//             }
-//             return response.json();
-//         })
-//         .then(data => {
-//             // Display column names on the webpage
-//             //Create a select input menu for the html
-//             console.log("Colnames sent back = ", data)
-//             const columnNamesDiv = document.getElementById('columnNames');
-//             //columnNamesDiv.textContent = data.join(', ');
-//         })
-//         .catch(error => {
-//             console.error('Error:', error);
-//             alert('Error fetching column names from the server. Please check the console for details.');
-//         });
-// }
+// Function to fetch column names from the server
+function fetchColumnNames() {
+    fetch('/getColumnNames')
+        .then(response => response.json())
+        .then(data => {
+            // Clear existing options
+            const selectElement = document.getElementById('columnSelect');
+            selectElement.innerHTML = '';
 
-function checkImage(url, onSuccess, onError) {
-    var img = new Image();
-    img.onload = onSuccess;
-    img.onerror = onError;
-    img.src = url;
+            // Populate the dropdown selection menu with the received column names
+            const columnNames = data.columnNames;
+            columnNames.forEach(columnName => {
+                const option = document.createElement('option');
+                option.value = columnName;
+                option.textContent = columnName;
+                selectElement.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error fetching column names from the server. Please check the console for details.');
+        });
 }
 
-// var pngFilePath = './barplot.png';
-// checkImage(pngFilePath, function() {
-//     document.write('<p>Here is the PNG image:</p>');
-//     document.write('<img src="' + pngFilePath + '" alt="Your Image">');
-// }, function() {
-//     document.write('<p>The image is not available.</p>');
-// });
+// Function to update the bar graph based on the selected column
+function updateBarGraph() {
+    // Fetch data for the selected column from the server
+    const selectedColumn = document.getElementById('columnSelect').value;
+
+    // Fetch hitters and data for the selected column from the server
+    Promise.all([
+        fetch('/hitters').then(response => response.json()),
+        fetch(`/getData?columnName=${selectedColumn}`).then(response => response.json())
+    ])
+    .then(([hittersData, columnData]) => {
+        // Extract the hitters and column data
+        const hitters = hittersData;
+        const columnValues = columnData.columnData;
+
+        console.log('Hitters:', hitters);
+        console.log('Values:', Object.values(columnValues));
+
+        // Create a Plotly bar graph using the extracted data
+        const trace = {
+            x: hitters,
+            y: Object.values(columnValues),
+            type: 'bar'
+        };
+        const layout = {
+            title: `${selectedColumn} By Player`,
+            xaxis: { title: 'Player' },
+            yaxis: { title: selectedColumn }
+        };
+        Plotly.newPlot('imageContainer', [trace], layout);
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error fetching data for the selected column. Please check the console for details.');
+    });
+}
+
+
+// Function to display the bar graph on the webpage
+function displayBarGraph() {
+    const pngFilePath = "barplot.png";
+
+    checkImage(pngFilePath, function() {
+        // If the image exists, display it on the webpage
+        document.getElementById('imageContainer').innerHTML = `
+            <img src="${pngFilePath}" alt="Bar Plot width="500" height="400">
+        `;
+    }, function() {
+        // If the image doesn't exist, display a message
+        document.getElementById('imageContainer').innerHTML = '<p>The image is not available.</p>';
+    });
+}
+
+// Function to handle the change event of the dropdown menu
+function handleDropdownChange() {
+    const selectedColumn = document.getElementById('columnSelect').value;
+    updateBarGraph(selectedColumn);
+}
+
+// Event listener for the file upload button
+document.getElementById('uploadButton').addEventListener('click', uploadFileToServer);
+
+// Event listener for the dropdown menu change event
+document.getElementById('columnSelect').addEventListener('change', handleDropdownChange);
+
+// Initial setup: Fetch column names when the page loads
+fetchColumnNames();

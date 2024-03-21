@@ -2,6 +2,8 @@
 <html>
 <head>
     <title>File Upload and Report Generation</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
 
 </head>
 <body>
@@ -24,6 +26,10 @@
     <!-- <h2>Column Names</h2>
     <div id="columnNames"></div> -->
 
+    <h2>Select Stat</h2>
+    <select id="columnSelect"></select>
+
+    <button onclick="updateBarGraph()">Generate Graph</button>
 
     <div id="imageContainer"></div>
 
