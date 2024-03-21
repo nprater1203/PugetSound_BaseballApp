@@ -45,7 +45,7 @@ function fetchColumnNames() {
             selectElement.innerHTML = '';
 
             // Populate the dropdown selection menu with the received column names
-            const columnNames = data.columnNames;
+            const columnNames = data.columnNames.slice(1);
             columnNames.forEach(columnName => {
                 const option = document.createElement('option');
                 option.value = columnName;
@@ -73,20 +73,48 @@ function updateBarGraph() {
         // Extract the hitters and column data
         const hitters = hittersData;
         const columnValues = columnData.columnData;
+        const initialStatValues = Object.values(columnValues)
+        const selectedStatValues = initialStatValues.map(item => item === null ? 0 : item);
+
+        
 
         console.log('Hitters:', hitters);
         console.log('Values:', Object.values(columnValues));
 
+        const teamAverage = selectedStatValues.reduce((total, value) => total + value, 0) / selectedStatValues.length;
+        console.log("Team average = ", teamAverage)
+
+
         // Create a Plotly bar graph using the extracted data
         const trace = {
             x: hitters,
-            y: Object.values(columnValues),
-            type: 'bar'
+            y: selectedStatValues,
+            type: 'bar',
+            transforms: [{
+                type: 'sort',
+                target: 'y', 
+                order: 'descending'
+            }]
         };
+
+        const averageLine = {
+            x: hitters,
+            y: Array(hitters.length).fill(teamAverage), // Fill the array with the average value
+            type: 'scatter',
+            mode: 'lines',
+            line: {
+                color: 'red', // Set the color of the line
+                dash: 'dash', // Make the line dashed
+                width: 2 // Set the width of the line
+            },
+            name: 'Average' // Set the name of the trace for the legend
+        };
+
         const layout = {
             title: `${selectedColumn} By Player`,
             xaxis: { title: 'Player' },
-            yaxis: { title: selectedColumn }
+            yaxis: { title: selectedColumn },
+            showlengend : false
         };
         Plotly.newPlot('imageContainer', [trace], layout);
     })

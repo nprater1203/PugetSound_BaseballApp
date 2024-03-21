@@ -95,6 +95,13 @@ function parseCSVData(csvData) {
     // You may need to use a library like 'csv-parser' for more complex CSV parsing
     const lines = csvData.split('\n');
     const headers = lines[0].split(',');
+    console.log(headers)
+
+    // Remove the /r from the last value in the header list 
+    let valueWithR = headers[headers.length - 1]; // 
+    valueWithR = valueWithR.slice(0, -1); // Remove the last character (\r)
+    headers[headers.length - 1] = valueWithR; 
+
     const jsonData = {};
 
     for (let i = 1; i < lines.length; i++) {
@@ -107,7 +114,12 @@ function parseCSVData(csvData) {
 
         const key = values[0]; // Assuming the first column is the key
         jsonData[key] = obj;
+
+
+        
     }
+
+   
 
     //console.log("JSON DATA = ",jsonData);
 
