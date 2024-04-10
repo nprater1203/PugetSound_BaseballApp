@@ -2,6 +2,7 @@
 
 const express = require('express');
 const multer = require('multer');
+const session = require('express-session');
 const fs = require('fs');
 const R = require('r-script');
 
@@ -69,7 +70,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
 
 app.get('/hitters', (req, res) => {
     const hitters = Object.values(dataDF).map(item => item["Hitter"]);
-    console.log("Hitters = ", hitters)
+    // console.log("Hitters = ", hitters)
     res.json(hitters);
 });
 
@@ -84,6 +85,23 @@ app.get('/getData', (req,res) => {
 
 });
 
+app.get('/generatePDF', (req, res) => {
+    const { default: jsPDF } = require("jspdf");
+
+    // Generate PDF using jsPDF
+    const pdf = new jsPDF();
+    // You can add content to the PDF here if needed
+
+    // console.log("Checking PDF = ", pdf);
+
+    // Convert PDF to a buffer
+    const buffer = pdf.output();
+
+    // Send the PDF buffer as a response
+    res.type('pdf');
+    res.send(buffer);
+});
+
 // Set up for a local host server
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
@@ -95,7 +113,7 @@ function parseCSVData(csvData) {
     // You may need to use a library like 'csv-parser' for more complex CSV parsing
     const lines = csvData.split('\n');
     const headers = lines[0].split(',');
-    console.log(headers)
+    // console.log(headers)
 
     // Remove the /r from the last value in the header list 
     let valueWithR = headers[headers.length - 1]; // 

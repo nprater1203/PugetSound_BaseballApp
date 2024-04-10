@@ -3,8 +3,10 @@
 <head>
     <title>Puget Sound Baseball</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <!-- Include jspdf library -->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script> -->
 
-
+    <!-- <script src="public/bundle.js"></script> -->
 </head>
 <body>
     <h1>Puget Sound Baseball</h1>
@@ -19,23 +21,33 @@
     <form id="uploadFile" enctype="multipart/form-data">
         <input type="file" id="fileID" accept=".csv">
         <button type="button" onclick="uploadFileToServer()">Upload File</button>
+        <button onclick="makePDF()">Create a PDF to Print</button>
     </form>
 
-    
-
-    <!-- <h2>Column Names</h2>
-    <div id="columnNames"></div> -->
 
     <h2>Select Stat</h2>
     <select id="columnSelect"></select>
 
     <button onclick="updateBarGraph()">Generate Graph</button>
+    <button onclick="addGraphToPDF()">Add Graph to PDF</button>
+    <button onclick="printGraphs()">Print Graphs</button>
 
     <div id="imageContainer"></div>
 
+    <!-- <script src="bundle.js"></script> -->
+
+    <!-- <script>
+        function makePDF(){
+            //const { default: jsPDF } = require("jspdf");
+
+            // Generate PDF using jsPDF
+            let pdf = new jsPDF();
+        }
+    </script> -->
+
+    <!-- <script type="module" src="script.js"></script> -->
     <script src="script.js"></script>
 
-  
-
+    
 </body>
 </html>

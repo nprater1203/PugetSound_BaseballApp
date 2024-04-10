@@ -1,5 +1,20 @@
+//const express = require('express');
+
+// module.exports ={
+//     uploadFileToServer,
+//     fetchColumnNames,
+//     updateBarGraph,
+//     updateBarGraph,
+//     printGraphs,
+//     addGraphToPDF
+// }
+
+
+let pdf;
+
 // Function to upload the file to the server
 function uploadFileToServer() {
+    fetchPDF();
     let dataFile = '';
     // Get the selected file
     const fileInput = document.getElementById('fileID');
@@ -45,7 +60,7 @@ function fetchColumnNames() {
             selectElement.innerHTML = '';
 
             // Populate the dropdown selection menu with the received column names
-            const columnNames = data.columnNames.slice(1);
+            const columnNames = data.columnNames.slice(2);
             columnNames.forEach(columnName => {
                 const option = document.createElement('option');
                 option.value = columnName;
@@ -76,14 +91,11 @@ function updateBarGraph() {
         const initialStatValues = Object.values(columnValues)
         const selectedStatValues = initialStatValues.map(item => item === null ? 0 : item);
 
-        
-
-        console.log('Hitters:', hitters);
-        console.log('Values:', Object.values(columnValues));
+        // console.log('Hitters:', hitters);
+        // console.log('Values:', Object.values(columnValues));
 
         const teamAverage = selectedStatValues.reduce((total, value) => total + value, 0) / selectedStatValues.length;
-        console.log("Team average = ", teamAverage)
-
+        // console.log("Team average = ", teamAverage)
 
         // Create a Plotly bar graph using the extracted data
         const trace = {
@@ -124,19 +136,90 @@ function updateBarGraph() {
     });
 }
 
+function printGraphs() {
+    // If no graphs are added to the PDF, return
+    if (!pdf || pdf.getNumberOfPages() === 0) {
+        alert('No graphs to print.');
+        return;
+    }
 
-// Function to display the bar graph on the webpage
-function displayBarGraph() {
-    const pngFilePath = "barplot.png";
+    // Save and print the PDF
+    pdf.save('graphs.pdf');
+}
 
-    checkImage(pngFilePath, function() {
-        // If the image exists, display it on the webpage
-        document.getElementById('imageContainer').innerHTML = `
-            <img src="${pngFilePath}" alt="Bar Plot width="500" height="400">
-        `;
-    }, function() {
-        // If the image doesn't exist, display a message
-        document.getElementById('imageContainer').innerHTML = '<p>The image is not available.</p>';
+function addGraphToPDF() {
+    // // Fetch the PDF if not already initialized
+    // fetchPDF();
+
+
+    console.log("Client Side PDF = ", pdf);
+    // Add the image to the PDF
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+
+    // Set canvas dimensions
+    canvas.width = 500; // Adjust as needed
+    canvas.height = 400; // Adjust as needed
+
+    // Make the graph a png and append it to a pdf file
+    Plotly.toImage('imageContainer', { format: 'png', height: 400, width: 500 })
+        .then(function (url) {
+            const img = new Image();
+            img.onload = function () {
+                context.drawImage(img, 0, 0);
+                // Convert canvas to base64 image data
+                const imageData = canvas.toDataURL('image/png');
+
+                const scaleFactor = 1;
+                const xPos = 10;
+                const yPos = 10;
+                const width = 180;
+                const height = 100;
+
+                // Check if pdf is not initialized, then initialize it
+                // if (!pdf) {
+                //     pdf = new jsPDF();
+                // }
+                if (pdf.getNumberOfPages() > 0) {
+                    pdf.addPage();
+                }
+
+                pdf.addImage(imageData, 'PNG', xPos, yPos, width * scaleFactor, height * scaleFactor);
+            };
+            img.src = url;
+        })
+        .catch(function (error) {
+            console.error('Error converting plot to image:', error);
+        });
+}
+
+
+// Function to fetch the PDF from the server and store it in the pdf variable
+function fetchPDF() {
+    fetch('/generatePDF')
+    .then(response => {
+        
+
+        if (response.ok) {
+            // If the response is successful, initialize the pdf variable
+            return response.blob(); // Get the PDF as ArrayBuffer
+        } else {
+            throw new Error('Failed to fetch PDF');
+        }
+    })
+    // .then(buffer => {
+    //     //const { default: jsPDF } = require("jspdf");
+    //     pdf = new jsPDF();
+    //     pdf.loadFile(buffer); // Load the PDF from the buffer
+    //     console.log('PDF initialized successfully');
+    // })'
+    .then(blob => {
+        const url = URL.createObjectURL(blob);
+        window.open(url, '_blank');
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Failed to fetch PDF. Please check the console for details.');
     });
 }
 
@@ -151,6 +234,8 @@ document.getElementById('uploadButton').addEventListener('click', uploadFileToSe
 
 // Event listener for the dropdown menu change event
 document.getElementById('columnSelect').addEventListener('change', handleDropdownChange);
+
+
 
 // Initial setup: Fetch column names when the page loads
 fetchColumnNames();
