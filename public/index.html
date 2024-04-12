@@ -7,32 +7,132 @@
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script> -->
 
     <!-- <script src="public/bundle.js"></script> -->
+
+    <style>
+        body {
+
+
+            font-family: Arial Black, sans-serif;
+
+            background-color: #ffffff;
+            color: #333;
+        }
+
+        h1, h2, h4 {
+            color: #720303;
+        }
+
+        h1{
+            text-align: center;
+            font-size: 50px;
+        }
+
+        h2{
+            font-size: 25px;
+        }
+
+        h4{
+            font-size: 10px;
+        }
+       
+        button {
+            padding: 8px 16px;
+            background-color: #720303;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #0052a3;
+        }
+        #imageContainer {
+            margin-top: 20px;
+        }
+
+        .image {
+            width: 100px; /* Adjust the width as needed */
+            height: auto; /* Maintain aspect ratio */
+            align-content: center;
+        }
+        .container {
+            text-align: center; /* Center-align content */
+            margin-top: -40px;
+        }
+
+        .image2 {
+            float: right;
+            width: 650px; /* Adjust the width as needed */
+            height: auto; /* Maintain aspect ratio */
+            margin-right: 60px;
+            margin-top: 25px;
+        }
+
+        .dropdown {
+            width: 150px;
+        }
+
+        .graphButton {
+            margin-left: 50px;
+        }
+
+        .boarder {
+            border: 2px solid maroon;
+            padding: 10px;
+            margin-bottom: 10px;
+            max-width: 700px;
+            
+        }
+
+        .graph {
+            margin-top: 100px;
+        }
+
+    
+
+        
+    </style>
 </head>
 <body>
-    <h1>Puget Sound Baseball</h1>
-    <h2>Upload a CSV File</h2>
-    <h4>1. Open the Google Docs File <br>
-        2. Select file tab <br>
-        3. Select download <br>
-        4. Select "Comma Selected Variable (.csv)" <br>
-        5. The data file should be downloaded on your local computer as a .csv file <br>
-        6. Upload that file <br>
-    </h4>
-    <form id="uploadFile" enctype="multipart/form-data">
-        <input type="file" id="fileID" accept=".csv">
-        <button type="button" onclick="uploadFileToServer()">Upload File</button>
-        <button onclick="makePDF()">Create a PDF to Print</button>
-    </form>
+    <h1>Puget Sound Baseball </h1>
+    <div class="container">
+        <img class="image" src="PS_RGB_maroon.jpg" alt="Puget Sound Logo">
+    </div>
 
+    <div>
+        <img class="image2" src="teamPhoto.jpeg" alt="Puget Sound Team Photo">
 
-    <h2>Select Stat</h2>
-    <select id="columnSelect"></select>
+        <div class="boarder">
+        
+            <h2>Upload a Hitters Stats File</h2>
+            
+            <h4>1. Open the Google stats file <br>
+                2. Select the file tab <br>
+                3. Select download <br>
+                4. Select "Comma-Seperated Value (.csv)" <br>
+                5. The data file should be downloaded on your local computer as a .csv file <br>
+                6. Upload that file <br>
+            </h4>
 
-    <button onclick="updateBarGraph()">Generate Graph</button>
-    <button onclick="addGraphToPDF()">Add Graph to PDF</button>
-    <button onclick="printGraphs()">Print Graphs</button>
+            
+            <form id="uploadFile" enctype="multipart/form-data">
+                <input type="file" id="fileID" accept=".csv">
+                <button type="button" onclick="uploadFileToServer()">Upload File</button>
+            </form>
+        </div>
+    </div>
 
-    <div id="imageContainer"></div>
+    <div class="boarder">
+    <h2>Select the Stat You Want to Visualize and Print Out</h2>
+    <h4>*Once the graph is generated, hover over the top right portion of the graph and <br>
+         select the camera to download the graph*</h4>
+    <select class="dropdown" id="columnSelect"></select>
+
+    <button class="graphButton" onclick="updateBarGraph()">Generate Graph</button>
+    </div>
+
+    <div class="graph" id="imageContainer"></div>
 
     <!-- <script src="bundle.js"></script> -->
 

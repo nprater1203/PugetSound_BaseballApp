@@ -1,13 +1,14 @@
-// Template to get a file uploaded to the server and use it run the r script got from chatGPT
+// Template for functions from ChatGPT
 
 const express = require('express');
 const multer = require('multer');
 const session = require('express-session');
 const fs = require('fs');
 const R = require('r-script');
+const path = require("path")
 
 const app = express();
-const port = 3000;
+const port = 3002;
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -25,13 +26,11 @@ const rContent = fs.readFileSync(rScriptPath, 'ascii');
 
 // Makes the page public on the selected server
 app.use(express.static('public'));
-
+//app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.post('/upload', upload.single('file'), (req, res) => {
-    // Handle file upload here
-    // Process the uploaded file, e.g., save it or perform data analysis
-    //console.log("Request = ", req)
+
     // Get the file buffer
     const fileBuffer = req.file.buffer;
     //console.log("File Buffer = ",fileBuffer);
@@ -39,31 +38,15 @@ app.post('/upload', upload.single('file'), (req, res) => {
     // Convert the file buffer to the appropriate data format for R
     dataFile = fileBuffer.toString('ascii'); // Adjust this based on your actual file type and data format
 
-    // console.log("Data file: ", dataFile)
-      
-    // console.log("Type of Data File = ", typeof(dataFile))
-
-    // const output = R("./testServer.R")
-    //     .data(dataFile)
-    //     .callSync();
-
-    // console.log(output);
-    // colNames = JSON.parse(output);
-
 
     const parsedData = parseCSVData(dataFile);
     dataDF = parsedData;
-    //console.log("Data frame = ", dataDF);
-    //console.log(Object.keys(Object.values(parsedData)[0]));
+
     colNames = Object.keys(Object.values(parsedData)[0]);
-    //console.log(parsedData);
     res.json({ columnNames: colNames });
  });
 
  app.get('/getColumnNames', (req, res) => {
-    // Receive column names from R script and send to the client
-    // const colNames = Object.keys(objectColNames);
-    // res.json(colNames);
 
     res.json({ columnNames: colNames });
 });
@@ -85,26 +68,26 @@ app.get('/getData', (req,res) => {
 
 });
 
-app.get('/generatePDF', (req, res) => {
-    const { default: jsPDF } = require("jspdf");
+// app.get('/generatePDF', (req, res) => {
+//     const { default: jsPDF } = require("jspdf");
 
-    // Generate PDF using jsPDF
-    const pdf = new jsPDF();
-    // You can add content to the PDF here if needed
+//     // Generate PDF using jsPDF
+//     const pdf = new jsPDF();
+//     // You can add content to the PDF here if needed
 
-    // console.log("Checking PDF = ", pdf);
+//     // console.log("Checking PDF = ", pdf);
 
-    // Convert PDF to a buffer
-    const buffer = pdf.output();
+//     // Convert PDF to a buffer
+//     const buffer = pdf.output();
 
-    // Send the PDF buffer as a response
-    res.type('pdf');
-    res.send(buffer);
-});
+//     // Send the PDF buffer as a response
+//     res.type('pdf');
+//     res.send(buffer);
+// });
 
 // Set up for a local host server
-app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
+app.listen(port, '10.150.3.55', () => { 
+    console.log(`Server is running at http://10.150.3.55:${port}`);
 });
 
 // Function to parse CSV data into JSON format (replace with your actual parsing logic)
@@ -133,13 +116,7 @@ function parseCSVData(csvData) {
         const key = values[0]; // Assuming the first column is the key
         jsonData[key] = obj;
 
-
-        
     }
-
-   
-
-    //console.log("JSON DATA = ",jsonData);
 
     return jsonData;
 }
