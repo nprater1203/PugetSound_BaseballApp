@@ -31,10 +31,12 @@ function uploadFileToServer() {
     .then(data => {
         //alert('Data sent successfully!');
         fetchColumnNames();
+        document.getElementById('graphSection').style.display = 'block';
+
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error executing R script. Please check the console for details.');
+        // alert('Error - Please check the console for details.');
     });
 }
 
@@ -55,6 +57,8 @@ function fetchColumnNames() {
                 option.textContent = columnName;
                 selectElement.appendChild(option);
             });
+
+
         })
         .catch(error => {
             console.error('Error:', error);
@@ -189,5 +193,9 @@ document.getElementById('uploadButton').addEventListener('click', uploadFileToSe
 // Event listener for the dropdown menu change event
 document.getElementById('columnSelect').addEventListener('change', handleDropdownChange);
 
+document.getElementById('graphSection').style.display = 'none';
+
 // Initial setup: Fetch column names when the page loads
 fetchColumnNames();
+
+

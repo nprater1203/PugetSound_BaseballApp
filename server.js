@@ -89,6 +89,9 @@ app.get('/getData', (req,res) => {
 app.listen(port, '10.150.3.55', () => { 
     console.log(`Server is running at http://10.150.3.55:${port}`);
 });
+// app.listen(port, () => {
+//     console.log(`Server is running at http://localhost:${port}`);
+// })
 
 // Function to parse CSV data into JSON format (replace with your actual parsing logic)
 function parseCSVData(csvData) {

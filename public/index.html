@@ -63,7 +63,7 @@
 
         .image2 {
             float: right;
-            width: 650px; /* Adjust the width as needed */
+            width: 42%;
             height: auto; /* Maintain aspect ratio */
             margin-right: 60px;
             margin-top: 25px;
@@ -123,13 +123,13 @@
         </div>
     </div>
 
-    <div class="boarder">
-    <h2>Select the Stat You Want to Visualize and Print Out</h2>
-    <h4>*Once the graph is generated, hover over the top right portion of the graph and <br>
-         select the camera to download the graph*</h4>
-    <select class="dropdown" id="columnSelect"></select>
+    <div class="boarder" id="graphSection" style="display:none;">
+        <h2>Select the Stat You Want to Visualize and Print Out</h2>
+        <h4>*Once the graph is generated, hover over the top right portion of the graph and <br>
+            select the camera to download the graph*</h4>
+        <select class="dropdown" id="columnSelect"></select>
 
-    <button class="graphButton" onclick="updateBarGraph()">Generate Graph</button>
+        <button class="graphButton" onclick="updateBarGraph()">Generate Graph</button>
     </div>
 
     <div class="graph" id="imageContainer"></div>
@@ -148,6 +148,5 @@
     <!-- <script type="module" src="script.js"></script> -->
     <script src="script.js"></script>
 
-    
 </body>
 </html>
